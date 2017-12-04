@@ -329,6 +329,13 @@
     </description>
   </class>
 
+  <class name="jsk_pcl/PassThroughFilter" type="jsk_pcl_ros::PassThroughFilter"
+         base_class_type="nodelet::Nodelet">
+    <description>
+      filter using xyz cartesian space
+    </description>
+  </class>
+
   <class name="jsk_pcl/ResizePointsPublisher" type="jsk_pcl_ros::ResizePointsPublisher"
          base_class_type="nodelet::Nodelet">
     <description>

@@ -1,0 +1,49 @@
+<!-- -*- mode: xml -*- -->
+<launch>
+  <!--
+  $ roslaunch openni_launch openni.launch    ;; start kinect camera
+  $ rosrun rqt_reconfigure rqt_reconfigure   ;; parameter settings
+  $ roslaunch jsk_pcl_ros hsi_color_filter.launch DEFAULT_NAMESPACE:=/camera/depth_registered INPUT:=points
+
+  * subscribe camera/depth_registered/hsi_output
+  * subscribe tf and find /target
+  -->
+  <arg name="INPUT" default="/multisense_local/organized_image_points2_color"/>
+  <arg name="CENTROID_FRAME" default="target"/>
+  <arg name="DEFAULT_NAMESPACE" default="PassThrough_filter"/>
+  <arg name="FILTER_NAME_SUFFIX" default=""/>
+  <arg name="OUTPUT" default="passthrough_output$(arg FILTER_NAME_SUFFIX)"/>
+
+  <arg name="x_max" default="10.0" />
+  <arg name="x_min" default="-10.0" />
+  <arg name="y_max" default="10.0" />
+  <arg name="y_min" default="-10.0" />
+  <arg name="z_max" default="10.0" />
+  <arg name="z_min" default="-10.0" />
+
+  <arg name="create_manager" default="true" />
+  <arg name="manager" default="passthrough_filter_manager$(arg FILTER_NAME_SUFFIX)" />
+
+  <group ns="$(arg DEFAULT_NAMESPACE)">
+    <node if="$(arg create_manager)"
+          pkg="nodelet" type="nodelet" name="$(arg manager)"
+          args="manager" output="screen"/>
+
+    <node pkg="nodelet" type="nodelet" name="passthrough_filter$(arg FILTER_NAME_SUFFIX)"
+          args="load jsk_pcl/PassThroughFilter $(arg manager)" output="screen">
+      <remap from="~input" to="$(arg INPUT)" />
+      <remap from="~output" to="$(arg OUTPUT)" />
+      <rosparam>
+        use_indices: false
+        keep_organized: true
+      </rosparam>
+      <param name="x_limit_max" value="$(arg x_max)" />
+      <param name="x_limit_min" value="$(arg x_min)" />
+      <param name="y_limit_max" value="$(arg y_max)" />
+      <param name="y_limit_min" value="$(arg y_min)" />
+      <param name="z_limit_max" value="$(arg z_max)" />
+      <param name="z_limit_min" value="$(arg z_min)" />
+    </node>
+  </group>
+
+</launch>
